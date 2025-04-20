@@ -1,6 +1,8 @@
 name: Build APK
 
 on:
+  push:
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -8,59 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
 
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y zip unzip openjdk-17-jdk adb
-        python3 -m pip install --upgrade pip
-        pip install buildozer cython
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential git python3-pip zip unzip openjdk-17-jdk
+          pip install --upgrade pip
+          pip install buildozer cython
 
-    - name: Install buildozer Android dependencies
-      run: |
-        sudo apt install -y \
-          python3-pip \
-          git \
-          zip \
-          unzip \
-          openjdk-17-jdk \
-          python3-setuptools \
-          python3-wheel \
-          python3-virtualenv \
-          libncurses5 \
-          libstdc++6 \
-          libffi-dev \
-          libssl-dev \
-          libsdl2-dev \
-          libsdl2-image-dev \
-          libsdl2-mixer-dev \
-          libsdl2-ttf-dev \
-          libportmidi-dev \
-          libswscale-dev \
-          libavformat-dev \
-          libavcodec-dev \
-          zlib1g-dev \
-          libjpeg-dev \
-          libfreetype6-dev \
-          libgl1-mesa-dev \
-          libgles2-mesa-dev \
-          libgstreamer1.0 \
-          gstreamer1.0-plugins-base \
-          gstreamer1.0-plugins-good
+      - name: Build APK
+        run: |
+          buildozer android debug
 
-    - name: Init buildozer
-      run: |
-        buildozer android debug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-        name: sklad_app
-        path: bin/*.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-debug
+          path: bin/*.apk
