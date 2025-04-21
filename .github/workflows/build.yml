@@ -5,33 +5,33 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
 jobs:
   build:
-    name: 🛠 Сборка APK
     runs-on: ubuntu-latest
 
     steps:
-    - name: 🔽 Клонируем репозиторий
+    - name: 🧾 Клонирование репозитория
       uses: actions/checkout@v2
 
-    - name: ⚙️ Устанавливаем зависимости
+    - name: ⚙️ Установка зависимостей
       run: |
         sudo apt update
-        sudo apt install -y build-essential git zip unzip openjdk-17-jdk python3 python3-pip libffi-dev libssl-dev
+        sudo apt install -y zip unzip openjdk-17-jdk python3-pip libffi-dev libssl-dev
         python3 -m pip install --upgrade pip
         pip install cython
         pip install buildozer
 
-    - name: 🧰 Настройка Buildozer
-      run: |
-        buildozer init || true
-
-    - name: 📦 Сборка APK
+    - name: 🔨 Сборка APK
       run: |
         buildozer -v android debug
 
-    - name: 📤 Загрузка APK как артефакта
-      uses: actions/upload-artifact@v2.3.1
+    - name: 📤 Загрузка артефакта
+      uses: actions/upload-artifact@v2
       with:
         name: sklad_tavrovo2.apk
         path: bin/*.apk
