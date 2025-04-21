@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     name: 🛠 Сборка APK
-    runs-on: ubuntu-latest  # Используем стабильную версию, а не ubuntu-24.04
+    runs-on: ubuntu-latest
 
     steps:
     - name: 🔽 Клонируем репозиторий
@@ -31,7 +31,7 @@ jobs:
         buildozer -v android debug
 
     - name: 📤 Загрузка APK как артефакта
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v2.3.1
       with:
         name: sklad_tavrovo2.apk
         path: bin/*.apk
