@@ -10,7 +10,7 @@ class LibffiRecipe(Recipe):
         build_dir = self.get_build_dir(arch.arch)
         env = self.get_recipe_env(arch)
         self.apply_patches(arch)
-        self.ctx.logger.info("Building libffi")
+        print("⚙️ Building libffi...")
 
         host = arch.command_prefix.strip("-")  # armeabi-v7a → arm-linux-androideabi
         configure = f"./configure --host={host} --prefix={build_dir}/install"
