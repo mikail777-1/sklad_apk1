@@ -1,57 +1,57 @@
-name: Сборка APK
+name: 📦 Сборка APK
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-apk:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Клонирование репозитория
+      - name: 🛒 Клонируем репозиторий
         uses: actions/checkout@v2
 
-      - name: 🐍 Установка Python
-        uses: actions/setup-python@v2
+      - name: 🐍 Устанавливаем Python
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
-      - name: ⚙️ Установка зависимостей и JDK
+      - name: 📦 Устанавливаем зависимости
         run: |
-          sudo apt update
-          sudo apt install -y zip unzip openjdk-17-jdk python3-pip wget
+          python -m pip install --upgrade pip
+          pip install buildozer cython
 
-      - name: 📂 Устанавливаем Android SDK и принимаем лицензии
+      - name: ☕ Устанавливаем Android SDK и принимаем лицензии
         run: |
           sudo apt update
           sudo apt install -y unzip openjdk-17-jdk wget
           mkdir -p ~/.buildozer/android/platform
           cd ~/.buildozer/android/platform
-          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+          wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O cmdline-tools.zip
           unzip cmdline-tools.zip -d cmdline-tools
           mkdir -p android-sdk/cmdline-tools/latest
           mv cmdline-tools/cmdline-tools/* android-sdk/cmdline-tools/latest/
           export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
           export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
           yes | sdkmanager --licenses
-          sdkmanager "platforms;android-31" "build-tools;33.0.2" "platform-tools"
+          sdkmanager "platforms;android-31" "build-tools;33.0.2"
 
-      - name: 🛠 Установка Buildozer
+      - name: 🔗 Создаём символическую ссылку sdkmanager для совместимости
         run: |
-          pip install --upgrade pip
-          pip install buildozer cython
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/tools/bin
+          ln -s $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager $HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
 
-      - name: 🧱 Сборка APK
+      - name: ⚙️ Сборка APK
         run: |
-          export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
-          export ANDROID_SDK_ROOT=$ANDROID_HOME
-          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+          export ANDROIDSDK=$HOME/.buildozer/android/platform/android-sdk
+          export ANDROIDNDK=$HOME/.buildozer/android/platform/android-ndk-r25b
+          export PATH=$ANDROIDSDK/platform-tools:$PATH
           buildozer android debug
 
-      - name: 📤 Загрузка .apk как артефакт
+      - name: 📤 Загружаем APK как артефакт
         uses: actions/upload-artifact@v4
         with:
-          name: sklad_tavrovo2.apk
+          name: sklad_tavrovo.apk
           path: bin/*.apk
