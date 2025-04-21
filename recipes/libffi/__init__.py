@@ -1,5 +1,4 @@
 from pythonforandroid.recipe import Recipe
-from pythonforandroid.util import sh  # 💡 добавляем это
 import os
 
 class LibffiRecipe(Recipe):
@@ -14,9 +13,15 @@ class LibffiRecipe(Recipe):
         print("⚙️ Building libffi...")
 
         host = arch.command_prefix.strip("-")
+        configure_path = os.path.join(build_dir, "configure")
+
+        if not os.path.exists(configure_path):
+            print("⚙️ Running autogen.sh to generate configure")
+            self.ctx.run("./autogen.sh", cwd=build_dir, env=env)
+
         configure = f"./configure --host={host} --prefix={build_dir}/install"
-        sh(configure, cwd=build_dir, env=env)
-        sh("make -j4", cwd=build_dir, env=env)
-        sh("make install", cwd=build_dir, env=env)
+        self.ctx.run(configure, cwd=build_dir, env=env)
+        self.ctx.run("make -j4", cwd=build_dir, env=env)
+        self.ctx.run("make install", cwd=build_dir, env=env)
 
 recipe = LibffiRecipe()
