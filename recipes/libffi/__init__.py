@@ -1,4 +1,5 @@
 from pythonforandroid.recipe import Recipe
+from pythonforandroid.util import sh  # 💡 добавляем это
 import os
 
 class LibffiRecipe(Recipe):
@@ -12,10 +13,10 @@ class LibffiRecipe(Recipe):
         self.apply_patches(arch)
         print("⚙️ Building libffi...")
 
-        host = arch.command_prefix.strip("-")  # armeabi-v7a → arm-linux-androideabi
+        host = arch.command_prefix.strip("-")
         configure = f"./configure --host={host} --prefix={build_dir}/install"
-        self.sh(configure, cwd=build_dir, env=env)
-        self.sh("make -j4", cwd=build_dir, env=env)
-        self.sh("make install", cwd=build_dir, env=env)
+        sh(configure, cwd=build_dir, env=env)
+        sh("make -j4", cwd=build_dir, env=env)
+        sh("make install", cwd=build_dir, env=env)
 
 recipe = LibffiRecipe()
