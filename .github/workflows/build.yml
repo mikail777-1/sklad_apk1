@@ -1,37 +1,29 @@
-name: Build APK
+name: Сборка APK
 
 on:
   push:
-    branches:
-      - master
-
-permissions:
-  contents: read
-  actions: read
-  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 🧾 Клонирование репозитория
-      uses: actions/checkout@v2
+      - name: 📥 Клонирование репозитория
+        uses: actions/checkout@v2
 
-    - name: ⚙️ Установка зависимостей
-      run: |
-        sudo apt update
-        sudo apt install -y zip unzip openjdk-17-jdk python3-pip libffi-dev libssl-dev
-        python3 -m pip install --upgrade pip
-        pip install cython
-        pip install buildozer
+      - name: ⏳ Установка зависимостей
+        run: |
+          sudo apt update
+          sudo apt install -y zip unzip openjdk-17-jdk python3-pip libffi-dev libssl-dev
+          pip install --upgrade cython
+          pip install buildozer
 
-    - name: 🔨 Сборка APK
-      run: |
-        buildozer -v android debug
+      - name: 🛠️ Сборка APK
+        run: |
+          buildozer -v android debug
 
-    - name: 📤 Загрузка артефакта
-      uses: actions/upload-artifact@v2
-      with:
-        name: sklad_tavrovo2.apk
-        path: bin/*.apk
+      - name: 📦 Загрузка APK как артефакта
+        uses: actions/upload-artifact@f36a14f974682c1a833b97471fb607d2317b29
+        with:
+          name: sklad_tavrovo2.apk
+          path: bin/*.apk
