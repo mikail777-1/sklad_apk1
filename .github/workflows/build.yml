@@ -59,6 +59,7 @@ jobs:
 
       - name: ⚙️ Настраиваем Buildozer окружение
         run: |
+          mkdir -p .buildozer
           echo "[app]" > .buildozer/global.json
           echo "sdk_path = $HOME/.buildozer/android/platform/android-sdk" >> .buildozer/global.json
           echo "ndk_path = $HOME/.buildozer/android/platform/android-ndk-r25b" >> .buildozer/global.json
