@@ -71,7 +71,7 @@ jobs:
           export ANDROIDSDK=$HOME/.buildozer/android/platform/android-sdk
           export ANDROIDNDK=$HOME/.buildozer/android/platform/android-ndk-r25b
           export PATH=$ANDROIDSDK/platform-tools:$PATH
-          buildozer android debug
+          buildozer android debug --local-recipes ./recipes
 
       - name: 📤 Загружаем APK в артефакты
         uses: actions/upload-artifact@v4
