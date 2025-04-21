@@ -36,7 +36,7 @@ jobs:
           export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
           export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
           yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-31" "build-tools;33.0.2"
+          sdkmanager "platforms;android-31" "build-tools;33.0.2" "platform-tools"
 
       - name: 🛠 Установка Buildozer
         run: |
