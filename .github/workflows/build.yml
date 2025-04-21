@@ -26,6 +26,7 @@ jobs:
             libtool \
             autoconf \
             automake \
+            m4 \
             pkg-config \
             zlib1g-dev \
             unzip \
