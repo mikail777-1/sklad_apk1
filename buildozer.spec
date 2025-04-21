@@ -6,7 +6,7 @@ package.domain = org.example
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,json,csv,ttf,txt
 version = 1.0
-requirements = python3,kivy,sqlite3,pyjnius,openpyxl
+requirements = python3,kivy,sqlite3,libffi,pyjnius,openpyxl
 orientation = portrait
 fullscreen = 1
 
