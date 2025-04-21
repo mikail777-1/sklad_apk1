@@ -23,18 +23,20 @@ jobs:
           sudo apt update
           sudo apt install -y zip unzip openjdk-17-jdk python3-pip wget
 
-      - name: 📂 Установка Android SDK и принятие лицензий
+      - name: 📂 Устанавливаем Android SDK и принимаем лицензии
         run: |
+          sudo apt update
+          sudo apt install -y unzip openjdk-17-jdk wget
           mkdir -p ~/.buildozer/android/platform
           cd ~/.buildozer/android/platform
           wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
-          unzip cmdline-tools.zip -d temp
+          unzip cmdline-tools.zip -d cmdline-tools
           mkdir -p android-sdk/cmdline-tools/latest
-          mv temp/cmdline-tools/* android-sdk/cmdline-tools/latest/
+          mv cmdline-tools/cmdline-tools/* android-sdk/cmdline-tools/latest/
           export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
           export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
           yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0"
+          sdkmanager "platform-tools" "platforms;android-31" "build-tools;33.0.2"
 
       - name: 🛠 Установка Buildozer
         run: |
