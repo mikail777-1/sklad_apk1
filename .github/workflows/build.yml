@@ -10,42 +10,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Клонируем репозиторий
+      - name: 📦 Клонирование репозитория
         uses: actions/checkout@v2
 
-      - name: 🐍 Устанавливаем Python
+      - name: 🐍 Установка Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
-      - name: 📦 Устанавливаем зависимости
+      - name: ⚙️ Установка системных зависимостей
         run: |
-          python -m pip install --upgrade pip
-          pip install buildozer cython
+          sudo apt update
+          sudo apt install -y zip unzip openjdk-17-jdk python3-pip wget
 
       - name: 📂 Устанавливаем Android SDK и принимаем лицензии
         run: |
-          sudo apt update
-          sudo apt install -y unzip openjdk-17-jdk wget
           mkdir -p ~/.buildozer/android/platform
           cd ~/.buildozer/android/platform
-          wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O cmdline-tools.zip
-          unzip cmdline-tools.zip -d cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+          unzip -q cmdline-tools.zip
           mkdir -p android-sdk/cmdline-tools/latest
-          mv cmdline-tools/cmdline-tools/* android-sdk/cmdline-tools/latest/
+          mv cmdline-tools android-sdk/cmdline-tools/latest/
           export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
           export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
           yes | sdkmanager --licenses
-          sdkmanager "platforms;android-31" "build-tools;33.0.2"
+          sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0"
+
+      - name: 🐍 Установка Buildozer
+        run: |
+          pip install --upgrade pip
+          pip install buildozer cython
 
       - name: ⚙️ Сборка APK
         run: |
-          export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
-          export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
+          export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
+          export ANDROID_SDK_ROOT=$ANDROID_HOME
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
           buildozer android debug
 
-      - name: 🚀 Загружаем APK
+      - name: 📤 Загрузка APK как артефакт
         uses: actions/upload-artifact@v4
         with:
-          name: sklad-apk
+          name: sklad_tavrovo2.apk
           path: bin/*.apk
