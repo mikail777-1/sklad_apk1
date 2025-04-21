@@ -10,6 +10,8 @@ class Sqlite3Recipe(Recipe):
     url = 'https://www.sqlite.org/2022/sqlite-autoconf-{version}.tar.gz'
     name = 'sqlite3'
     built_libraries = {'libsqlite3.a': 'lib/libsqlite3.a'}
+    def get_lib_dir(self, arch):
+        return os.path.join(self.get_build_dir(arch), 'lib')
 
     def build_arch(self, arch):
         build_dir = self.get_build_dir(arch.arch)
