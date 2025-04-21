@@ -1,27 +1,26 @@
 from pythonforandroid.recipe import Recipe
 import os
+import subprocess
+
 
 class LibffiRecipe(Recipe):
-    version = "3.4.2"
-    url = "https://github.com/libffi/libffi/releases/download/v{version}/libffi-{version}.tar.gz"
-    name = "libffi"
+    version = '3.4.2'
+    url = 'https://github.com/libffi/libffi/releases/download/v{version}/libffi-{version}.tar.gz'
+    name = 'libffi'
 
     def build_arch(self, arch):
         build_dir = self.get_build_dir(arch.arch)
-        env = self.get_recipe_env(arch)
-        self.apply_patches(arch)
-        print("⚙️ Building libffi...")
+        env = self.get_build_env(arch)
 
-        host = arch.command_prefix.strip("-")
-        configure_path = os.path.join(build_dir, "configure")
+        configure = ['./configure', '--host=arm-linux-androideabi', '--prefix=' + self.get_install_dir(arch.arch)]
 
-        if not os.path.exists(configure_path):
-            print("⚙️ Running autogen.sh to generate configure")
-            self.ctx.run("./autogen.sh", cwd=build_dir, env=env)
+        # Создаём configure, если его нет
+        if not os.path.exists(os.path.join(build_dir, 'configure')):
+            subprocess.run(['./autogen.sh'], cwd=build_dir, env=env, check=True)
 
-        configure = f"./configure --host={host} --prefix={build_dir}/install"
-        self.ctx.run(configure, cwd=build_dir, env=env)
-        self.ctx.run("make -j4", cwd=build_dir, env=env)
-        self.ctx.run("make install", cwd=build_dir, env=env)
+        subprocess.run(configure, cwd=build_dir, env=env, check=True)
+        subprocess.run(['make', '-j4'], cwd=build_dir, env=env, check=True)
+        subprocess.run(['make', 'install'], cwd=build_dir, env=env, check=True)
+
 
 recipe = LibffiRecipe()
