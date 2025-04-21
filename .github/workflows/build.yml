@@ -21,13 +21,19 @@ jobs:
       - name: 📁 Установка зависимостей
         run: |
           sudo apt update
-          sudo apt install -y zip unzip openjdk-17-jdk python3-pip libffi-dev libssl-dev
+          sudo apt install -y zip unzip openjdk-17-jdk wget python3-pip libffi-dev libssl-dev
           pip install --upgrade pip
           pip install buildozer cython
 
-      - name: 📥 Установка Android SDK и NDK
+      - name: 📥 Установка Android SDK вручную
         run: |
-          mkdir -p ~/.buildozer/android/platform
+          mkdir -p "$HOME/android-sdk/cmdline-tools"
+          cd "$HOME/android-sdk/cmdline-tools"
+          wget https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
+          unzip commandlinetools-linux-*.zip
+          mv cmdline-tools latest
+          export ANDROID_SDK_ROOT=$HOME/android-sdk
+          export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
           yes | sdkmanager --licenses
           sdkmanager "platform-tools" "platforms;android-31" "build-tools;30.0.3"
         env:
@@ -35,6 +41,8 @@ jobs:
 
       - name: 🔧 Сборка APK
         run: |
+          export ANDROID_SDK_ROOT=$HOME/android-sdk
+          export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
           buildozer android debug
         env:
           JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
