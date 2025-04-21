@@ -10,12 +10,14 @@ class LibffiRecipe(Recipe):
 
     def build_arch(self, arch):
         build_dir = self.get_build_dir(arch.arch)
-        install_dir = self.get_install_dir(arch.arch)
+        install_dir = os.path.join(self.ctx.get_python_install_dir(), 'libffi')
 
         env = os.environ.copy()
         env.update(arch.get_env())
 
-        configure = ['./configure', '--host=arm-linux-androideabi', f'--prefix={install_dir}']
+        configure = ['./configure',
+                     '--host=arm-linux-androideabi',
+                     f'--prefix={install_dir}']
 
         if not os.path.exists(os.path.join(build_dir, 'configure')) and os.path.exists(os.path.join(build_dir, 'autogen.sh')):
             subprocess.run(['./autogen.sh'], cwd=build_dir, env=env, check=True)
