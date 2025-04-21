@@ -23,7 +23,7 @@ jobs:
           buildozer -v android debug
 
       - name: 📦 Загрузка APK как артефакта
-        uses: actions/upload-artifact@f36a14f974682c1a833b97471fb607d2317b29
+        uses: actions/upload-artifact@v3
         with:
           name: sklad_tavrovo2.apk
           path: bin/*.apk
