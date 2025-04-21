@@ -2,6 +2,8 @@ name: Сборка APK
 
 on:
   push:
+    branches:
+      - master
 
 jobs:
   build:
@@ -9,9 +11,9 @@ jobs:
 
     steps:
       - name: 📥 Клонирование репозитория
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: ⏳ Установка зависимостей
+      - name: ⚙️ Установка зависимостей
         run: |
           sudo apt update
           sudo apt install -y zip unzip openjdk-17-jdk python3-pip libffi-dev libssl-dev
@@ -23,7 +25,7 @@ jobs:
           buildozer -v android debug
 
       - name: 📦 Загрузка APK как артефакта
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sklad_tavrovo2.apk
           path: bin/*.apk
