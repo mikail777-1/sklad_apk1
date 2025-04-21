@@ -10,7 +10,7 @@ class LibffiRecipe(Recipe):
 
     def build_arch(self, arch):
         build_dir = self.get_build_dir(arch.arch)
-        install_dir = os.path.join(self.ctx.get_python_install_dir(), 'libffi')
+        install_dir = os.path.join(self.ctx.get_python_install_dir(arch), 'libffi')
 
         env = os.environ.copy()
         env.update(arch.get_env())
