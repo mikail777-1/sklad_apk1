@@ -10,22 +10,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Клонирование репозитория
-        uses: actions/checkout@v4
+      - name: 📦 Клонирование репозитория
+        uses: actions/checkout@v2
 
-      - name: ⚙️ Установка зависимостей
+      - name: 🐍 Установка Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 📁 Установка зависимостей
         run: |
           sudo apt update
           sudo apt install -y zip unzip openjdk-17-jdk python3-pip libffi-dev libssl-dev
-          pip install --upgrade cython
-          pip install buildozer
+          pip install --upgrade pip
+          pip install buildozer cython
 
-      - name: 🛠️ Сборка APK
+      - name: 📥 Установка Android SDK и NDK
         run: |
-          buildozer -v android debug
+          mkdir -p ~/.buildozer/android/platform
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-31" "build-tools;30.0.3"
+        env:
+          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
-      - name: 📦 Загрузка APK как артефакта
+      - name: 🔧 Сборка APK
+        run: |
+          buildozer android debug
+        env:
+          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+
+      - name: 📤 Загрузка APK
         uses: actions/upload-artifact@v4
         with:
-          name: sklad_tavrovo2.apk
+          name: sklad-apk
           path: bin/*.apk
